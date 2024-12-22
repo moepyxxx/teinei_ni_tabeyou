@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"name": "teinei_ni_tabeyou",
+			"path": "."
+		},
+		{
+			"name": "server",
+			"path": "./server"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"server": true,
+		},
+		"rubyLsp.formatter": "rubocop",
+		"rubyLsp.rubyVersionManager": {
+			"identifier": "rbenv"
+		},
+		"[ruby]": {
+			"editor.formatOnSave": true,
+			"editor.defaultFormatter": "Shopify.ruby-lsp"
+		}
+	}
+}
