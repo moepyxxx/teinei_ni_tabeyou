@@ -10,11 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_21_135221) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_22_043726) do
   create_table "shopping_items", charset: "utf8mb3", force: :cascade do |t|
     t.string "item", null: false
     t.boolean "checked", null: false
     t.string "last_checked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "users", charset: "utf8mb3", force: :cascade do |t|
+    t.string "email", null: false
+    t.string "password_digest", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
