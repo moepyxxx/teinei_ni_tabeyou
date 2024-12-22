@@ -17,6 +17,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_22_043726) do
     t.string "last_checked_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_shopping_items_on_user_id"
   end
 
   create_table "users", charset: "utf8mb3", force: :cascade do |t|
