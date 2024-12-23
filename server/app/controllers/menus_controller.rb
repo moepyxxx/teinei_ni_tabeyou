@@ -3,6 +3,15 @@ class MenusController < ApplicationController
     date = Date.parse(params[:date])
     menus = Menu.includes(menu_recipes: :recipe).where(date: date)
 
+    if menus.blank?
+      render json: {
+        dinner: nil,
+        lunch: nil,
+        morning: nil
+      }
+      return
+    end
+
     dinner = menus.select { |item| item[:section] == "dinner" }.presence&.first
     lunch = menus.select { |item| item[:section] == "lunch" }.presence&.first
     morning = menus.select { |item| item[:section] == "morning" }.presence&.first
