@@ -1,6 +1,6 @@
 class Recipe < ApplicationRecord
   belongs_to :user
-  has_many :material, dependent: :destroy
+  has_many :materials, dependent: :destroy
 
   validates :title, presence: true
   validates :source_url, length: { maximum: 100 }

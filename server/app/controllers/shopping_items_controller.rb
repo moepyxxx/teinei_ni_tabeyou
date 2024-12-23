@@ -6,9 +6,7 @@ class ShoppingItemsController < ApplicationController
   def show
     set_shopping_item
 
-    respond_to do |format|
-      format.json { render json: @shopping_item }
-    end
+    render json: @shopping_item
   end
 
   def index
