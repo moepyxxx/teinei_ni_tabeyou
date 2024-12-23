@@ -25,6 +25,16 @@ class RecipesController < ApplicationController
     end
   end
 
+  def destroy
+    @recipe = Recipe.find(params[:id])
+
+    if @recipe.destroy
+      head :ok
+    else
+      render json: { error: "Failed to delete the item. Reason: #{@recipe.errors.full_messages}" }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def recipe_params

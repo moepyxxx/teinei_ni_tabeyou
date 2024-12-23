@@ -43,11 +43,6 @@ class ShoppingItemsController < ApplicationController
     set_shopping_item
     check_different_user
 
-    if @shopping_item.user_id != current_user.id
-      render json: { error: "Cannot Delete Different User Shopping Item" }, status: :unprocessable_entity
-      return
-    end
-
     if @shopping_item.destroy
       head :ok
     else
