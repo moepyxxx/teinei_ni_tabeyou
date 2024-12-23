@@ -56,15 +56,16 @@ class ShoppingItemsController < ApplicationController
   end
 
   private
-    def shopping_item_params
-      params.require(:shopping_item).permit(:item, :checked)
-    end
 
-    def set_shopping_item
-      @shopping_item = ShoppingItem.find(params[:id])
-    end
+  def shopping_item_params
+    params.require(:shopping_item).permit(:item, :checked)
+  end
 
-    def check_different_user
-      render json: { error: "Cannot Act Different User Shopping Item" }, status: :unprocessable_entity unless @shopping_item.user_id == current_user.id
-    end
+  def set_shopping_item
+    @shopping_item = ShoppingItem.find(params[:id])
+  end
+
+  def check_different_user
+    render json: { error: "Cannot Act Different User Shopping Item" }, status: :unprocessable_entity unless @shopping_item.user_id == current_user.id
+  end
 end
