@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_23_020021) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_23_023126) do
   create_table "recipes", charset: "utf8mb3", force: :cascade do |t|
     t.string "title", null: false
     t.string "source_url"
@@ -40,4 +40,5 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_23_020021) do
   end
 
   add_foreign_key "recipes", "users", on_delete: :cascade
+  add_foreign_key "shopping_items", "users", on_delete: :cascade
 end

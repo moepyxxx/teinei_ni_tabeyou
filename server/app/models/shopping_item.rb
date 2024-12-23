@@ -1,4 +1,6 @@
 class ShoppingItem < ApplicationRecord
+  belongs_to :user
+
   validates :item, presence: true
   validates :item, length: { maximum: 50 }
   validate :cannot_update_when_checked, on: :update
