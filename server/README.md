@@ -1,24 +1,47 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Database
 
-Things you may want to cover:
+```mermaid
 
-* Ruby version
+	User{
+		bigint ID PK
+		string email
+		string password
+	}
 
-* System dependencies
+	Material{
+		bigint ID PK
+		string item
+		string amount
+		bigint recipe_id FK
+		bigint user_id FK
+	}
 
-* Configuration
+	Recipe{
+		bigint ID PK
+		string title
+		string source_url
+		string source_memo
+		string memo
+		bigint user_id FK
+	}
 
-* Database creation
+	Menu{
+		bigint ID PK
+		date date
+		bigint user_id FK
+	}
 
-* Database initialization
+	MenuRecipe{
+			bigint ID PK
+			bigint menu_id FK
+			bigint recipe_id FK
+			bigint user_id FK
+	}
 
-* How to run the test suite
+	 Recipe ||--o{ Material: ""
+	 Menu ||--o{ MenuRecipe: ""
+	 Recipe ||--o{ MenuRecipe: ""
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
