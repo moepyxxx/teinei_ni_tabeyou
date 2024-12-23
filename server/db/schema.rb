@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_23_061556) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_23_100606) do
   create_table "materials", charset: "utf8mb3", force: :cascade do |t|
     t.string "item", null: false
     t.string "amount"
@@ -20,6 +20,17 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_23_061556) do
     t.datetime "updated_at", null: false
     t.index ["recipe_id"], name: "fk_rails_474e19a40e"
     t.index ["user_id"], name: "fk_rails_cf58c42728"
+  end
+
+  create_table "menu_recipes", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "recipe_id"
+    t.bigint "menu_id"
+    t.bigint "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["menu_id"], name: "fk_rails_e1d703b133"
+    t.index ["recipe_id", "user_id", "menu_id"], name: "unique_recipe_id_menu_id_user_id", unique: true
+    t.index ["user_id"], name: "fk_rails_64fa5c08b3"
   end
 
   create_table "menus", charset: "utf8mb3", force: :cascade do |t|
@@ -62,6 +73,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_23_061556) do
 
   add_foreign_key "materials", "recipes", on_delete: :cascade
   add_foreign_key "materials", "users", on_delete: :cascade
+  add_foreign_key "menu_recipes", "menus", on_delete: :cascade
+  add_foreign_key "menu_recipes", "recipes", on_delete: :cascade
+  add_foreign_key "menu_recipes", "users", on_delete: :cascade
   add_foreign_key "menus", "users", on_delete: :cascade
   add_foreign_key "recipes", "users", on_delete: :cascade
   add_foreign_key "shopping_items", "users", on_delete: :cascade
