@@ -42,14 +42,6 @@ class MenusController < ApplicationController
     date = Date.parse(params[:date])
 
     menus = Menu.where(date: date, user_id: current_user.id)
-    p "--------"
-    p current_user.id
-    p "--------"
-    p menus
-    p "--------"
-    p menus.present?
-    p "--------"
-
     if menus.present?
       render json: { error: "Already Created" }, status: :unprocessable_entity
       return
@@ -94,11 +86,47 @@ class MenusController < ApplicationController
   end
 
   def update
-    # impl
-  end
+    date = Date.parse(params[:date])
+    menus = Menu.where(date: date, user: current_user.id)
+    menu_ids = menus.map { |menu| menu.id }
 
-  def destroy
-    # impl
+    ActiveRecord::Base.transaction do
+      MenuRecipe.where(menu_id: menu_ids, user_id: current_user.id).destroy_all
+
+      begin
+        lunch_id = menus.find { |menu| menu.section == "lunch" }.id
+        menu_params[:lunch].each do |recipe_id|
+          MenuRecipe.create!(
+            menu_id: lunch_id,
+            recipe_id: recipe_id,
+            user_id: current_user.id,
+          )
+        end
+
+        dinner_id = menus.find { |menu| menu.section == "dinner" }.id
+        menu_params[:dinner].each do |recipe_id|
+          MenuRecipe.create!(
+            menu_id: dinner_id,
+            recipe_id: recipe_id,
+            user_id: current_user.id,
+          )
+        end
+
+        morning_id = menus.find { |menu| menu.section == "morning" }.id
+        menu_params[:morning].each do |recipe_id|
+          MenuRecipe.create!(
+            menu_id: morning_id,
+            recipe_id: recipe_id,
+            user_id: current_user.id,
+          )
+        end
+
+        head :ok
+
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { error: e.message }, status: :unprocessable_entity
+      end
+    end
   end
 
   def menu_params

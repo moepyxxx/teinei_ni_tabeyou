@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resources :recipes, only: [ :show, :create, :update, :destroy ]
   get "/menus/:date", to: "menus#show", constraints: { date: /\d{8}/ }
   post "/menus/:date", to: "menus#create", constraints: { date: /\d{8}/ }
+  patch "/menus/:date", to: "menus#update", constraints: { date: /\d{8}/ }
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
