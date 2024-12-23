@@ -39,7 +39,58 @@ class MenusController < ApplicationController
   end
 
   def create
-    # impl
+    date = Date.parse(params[:date])
+
+    menus = Menu.where(date: date, user_id: current_user.id)
+    p "--------"
+    p current_user.id
+    p "--------"
+    p menus
+    p "--------"
+    p menus.present?
+    p "--------"
+
+    if menus.present?
+      render json: { error: "Already Created" }, status: :unprocessable_entity
+      return
+    end
+
+
+    ActiveRecord::Base.transaction do
+      begin
+        dinner = Menu.create!(date: date, section: "dinner", user_id: current_user.id)
+        menu_params[:dinner].each do |recipe_id|
+          MenuRecipe.create!(
+            menu_id: dinner.id,
+            recipe_id: recipe_id,
+            user_id: current_user.id,
+          )
+        end
+
+        lunch = Menu.create!(date: date, section: "lunch", user_id: current_user.id)
+        menu_params[:lunch].each do |recipe_id|
+          MenuRecipe.create!(
+            menu_id: lunch.id,
+            recipe_id: recipe_id,
+            user_id: current_user.id,
+          )
+        end
+
+        morning = Menu.create!(date: date, section: "morning", user_id: current_user.id)
+        menu_params[:morning].each do |recipe_id|
+          MenuRecipe.create!(
+            menu_id: morning.id,
+            recipe_id: recipe_id,
+            user_id: current_user.id,
+          )
+        end
+
+        head :ok
+
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { error: e.message }, status: :unprocessable_entity
+      end
+    end
   end
 
   def update
@@ -48,5 +99,13 @@ class MenusController < ApplicationController
 
   def destroy
     # impl
+  end
+
+  def menu_params
+    params.require(:menu).permit(
+      dinner: [],
+      morning: [],
+      lunch: []
+    )
   end
 end
