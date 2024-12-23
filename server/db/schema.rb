@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_12_22_043726) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_23_020021) do
+  create_table "recipes", charset: "utf8mb3", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "source_url"
+    t.string "source_memo"
+    t.string "memo"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "fk_rails_9606fce865"
+  end
+
   create_table "shopping_items", charset: "utf8mb3", force: :cascade do |t|
     t.string "item", null: false
     t.boolean "checked", null: false
@@ -27,4 +38,6 @@ ActiveRecord::Schema[7.2].define(version: 2024_12_22_043726) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "recipes", "users", on_delete: :cascade
 end
