@@ -25,6 +25,29 @@ class RecipesController < ApplicationController
     end
   end
 
+  def update
+    ActiveRecord::Base.transaction do
+      begin
+
+      # 更新
+      @recipe = Recipe.find(params[:id]) # 既存のレコードを取得
+      @recipe.update!(recipe_params.except(:materials).merge(user_id: current_user.id))
+
+      # 小テーブルのDelete Insert
+      Material.where(recipe_id: params[:id]).destroy_all
+
+      recipe_params[:materials].each do |material_params|
+        @recipe.materials.create!(material_params.merge(user_id: current_user.id))
+      end
+
+      head :ok
+
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { error: e.message }, status: :unprocessable_entity
+      end
+    end
+  end
+
   def destroy
     @recipe = Recipe.find(params[:id])
 
