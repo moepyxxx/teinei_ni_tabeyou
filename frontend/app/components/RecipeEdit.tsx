@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from "react";
+import type { FC, MouseEvent, ReactNode } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
@@ -9,7 +9,7 @@ import { useToast } from "~/hooks/use-toast";
 
 const schema = yup.object().shape({
   title: yup.string().max(50, "Too Long!").required("Required"),
-  sourceURL: yup.string().max(100, "Too Long!").nullable(),
+  sourceURL: yup.string().url().max(100, "Too Long!").nullable(),
   sourceMemo: yup.string().max(100, "Too Long!").nullable(),
   memo: yup.string().max(100, "Too Long!").nullable(),
   materials: yup.array().of(
@@ -25,7 +25,9 @@ type EditRecipeSchemaType = yup.InferType<typeof schema>;
 type Props = {
   recipeID: number;
   initialRecipe: Recipe;
-  renderAction: (onSubmit: () => void) => ReactNode;
+  renderAction: (
+    onSubmit: (e: MouseEvent<HTMLButtonElement, MouseEvent>) => void
+  ) => ReactNode;
 };
 
 export const RecipeEdit: FC<Props> = ({
@@ -43,6 +45,7 @@ export const RecipeEdit: FC<Props> = ({
         sourceMemo: initialRecipe.source_memo,
       }}
       validationSchema={schema}
+      validateOnMount
       onSubmit={async ({ title, sourceMemo, sourceURL, materials }) => {
         const response = await fetch(
           `${import.meta.env.VITE_API_URL}/recipes/${recipeID}`,
@@ -65,8 +68,11 @@ export const RecipeEdit: FC<Props> = ({
           });
           return;
         }
+        toast({
+          description: "レシピを保存しました！",
+        });
       }}>
-      {({ values, handleSubmit }) => (
+      {({ values, handleSubmit, isValid }) => (
         <Form>
           <>
             <div className="space-y-3">
@@ -76,7 +82,9 @@ export const RecipeEdit: FC<Props> = ({
                   <div className="space-y-1">
                     <p>レシピ名</p>
                     <Input {...field} />
-                    <ErrorMessage name="title" />
+                    <p className="text-sm text-red-400">
+                      <ErrorMessage name="title" />
+                    </p>
                   </div>
                 )}
               </Field>
@@ -86,7 +94,9 @@ export const RecipeEdit: FC<Props> = ({
                   <div className="space-y-1">
                     <p>作り方URL</p>
                     <Input {...field} />
-                    <ErrorMessage name="sourceURL" />
+                    <p className="text-sm text-red-400">
+                      <ErrorMessage name="sourceURL" />
+                    </p>
                   </div>
                 )}
               </Field>
@@ -96,7 +106,9 @@ export const RecipeEdit: FC<Props> = ({
                   <div className="space-y-1">
                     <p>その他作り方メモ</p>
                     <Textarea {...field} />
-                    <ErrorMessage name="sourceMemo" />
+                    <p className="text-sm text-red-400">
+                      <ErrorMessage name="sourceMemo" />
+                    </p>
                   </div>
                 )}
               </Field>
@@ -154,12 +166,23 @@ export const RecipeEdit: FC<Props> = ({
                   <div className="space-y-1">
                     <p>その他メモ</p>
                     <Textarea {...field} />
-                    <ErrorMessage name="memo" />
+                    <p className="text-sm text-red-400">
+                      <ErrorMessage name="memo" />
+                    </p>
                   </div>
                 )}
               </Field>
             </div>
-            {renderAction(() => handleSubmit)}
+            {renderAction((e) => {
+              if (!isValid) {
+                toast({
+                  description: "エラーを修正してください",
+                });
+                e.preventDefault();
+                return;
+              }
+              handleSubmit();
+            })}
           </>
         </Form>
       )}

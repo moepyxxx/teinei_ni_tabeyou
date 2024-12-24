@@ -53,7 +53,12 @@ export const RecipeEditDrawer: FC<Props> = ({ recipeID, renderButton }) => {
               renderAction={(onSubmit) => (
                 <DrawerFooter>
                   <DrawerClose asChild>
-                    <Button type="submit" onClick={onSubmit}>
+                    <Button
+                      type="submit"
+                      onClick={(e) => {
+                        // @ts-expect-error なぜかわからない・・・
+                        onSubmit(e);
+                      }}>
                       保存する
                     </Button>
                   </DrawerClose>
