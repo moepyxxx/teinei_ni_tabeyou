@@ -102,12 +102,7 @@ export default function Menus() {
                               <span>リンク</span>
                             </a>
                           )}
-                          <button
-                            type="button"
-                            className="flex items-center gap-1">
-                            <i className="fa-solid fa-file" />
-                            <span>詳細</span>
-                          </button>
+
                           <RecipeEditDrawer
                             recipeID={recipe.id}
                             renderButton={(onClick) => (
@@ -115,8 +110,8 @@ export default function Menus() {
                                 onClick={onClick}
                                 type="button"
                                 className="flex items-center gap-1">
-                                <i className="fa-solid fa-pen" />
-                                <span>編集</span>
+                                <i className="fa-solid fa-file" />
+                                <span>詳細</span>
                               </button>
                             )}
                           />

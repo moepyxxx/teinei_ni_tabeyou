@@ -44,7 +44,7 @@ export const RecipeEditDrawer: FC<Props> = ({ recipeID, renderButton }) => {
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm px-2">
           <DrawerHeader>
-            <DrawerTitle>レシピを編集する</DrawerTitle>
+            <DrawerTitle>レシピの詳細</DrawerTitle>
           </DrawerHeader>
           {initialRecipe ? (
             <RecipeEdit
@@ -59,7 +59,7 @@ export const RecipeEditDrawer: FC<Props> = ({ recipeID, renderButton }) => {
                         // @ts-expect-error なぜかわからない・・・
                         onSubmit(e);
                       }}>
-                      保存する
+                      変更を保存する
                     </Button>
                   </DrawerClose>
                   <DrawerClose asChild>
