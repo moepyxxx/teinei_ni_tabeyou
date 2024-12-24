@@ -16,6 +16,7 @@ import { RecipeEditDrawer } from "~/components/RecipeEditDrawer";
 type Recipe = {
   id: number;
   title: string;
+  source_url: string | null;
 };
 
 type Menus = {
@@ -87,10 +88,20 @@ export default function Menus() {
                   <div className="space-y-3">
                     {recipes?.map((recipe) => (
                       <div className="flex justify-between" key={recipe.id}>
-                        <div className="w-2/3">
+                        <div className="w-1/2">
                           <p>{recipe.title}</p>
                         </div>
                         <div className="flex gap-2">
+                          {recipe.source_url && (
+                            <a
+                              href={recipe.source_url}
+                              rel="noreferrer"
+                              target="_blank"
+                              className="flex items-center gap-1">
+                              <i className="fa-solid fa-paper-plane" />
+                              <span>リンク</span>
+                            </a>
+                          )}
                           <button
                             type="button"
                             className="flex items-center gap-1">

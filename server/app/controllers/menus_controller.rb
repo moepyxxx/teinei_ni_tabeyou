@@ -20,19 +20,22 @@ class MenusController < ApplicationController
       dinner: dinner&.menu_recipes&.map do |menu_recipe|
         {
           id: menu_recipe.recipe.id,
-          title: menu_recipe.recipe.title
+          title: menu_recipe.recipe.title,
+          source_url: menu_recipe.recipe.source_url
         }
       end || [],
       lunch: lunch&.menu_recipes&.map do |menu_recipe|
         {
           id: menu_recipe.recipe.id,
-          title: menu_recipe.recipe.title
+          title: menu_recipe.recipe.title,
+          source_url: menu_recipe.recipe.source_url
         }
       end || [],
       morning: morning&.menu_recipes&.map do |menu_recipe|
         {
           id: menu_recipe.recipe.id,
-          title: menu_recipe.recipe.title
+          title: menu_recipe.recipe.title,
+          source_url: menu_recipe.recipe.source_url
         }
       end || []
     }
