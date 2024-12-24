@@ -11,6 +11,7 @@ import {
 } from "~/components/ui/accordion";
 import { Button } from "~/components/ui/button";
 import { useMemo } from "react";
+import { RecipeEditDrawer } from "~/components/RecipeEditDrawer";
 
 type Recipe = {
   id: number;
@@ -96,12 +97,18 @@ export default function Menus() {
                             <i className="fa-solid fa-file" />
                             <span>詳細</span>
                           </button>
-                          <button
-                            type="button"
-                            className="flex items-center gap-1">
-                            <i className="fa-solid fa-pen" />
-                            <span>編集</span>
-                          </button>
+                          <RecipeEditDrawer
+                            recipeID={recipe.id}
+                            renderButton={(onClick) => (
+                              <button
+                                onClick={onClick}
+                                type="button"
+                                className="flex items-center gap-1">
+                                <i className="fa-solid fa-pen" />
+                                <span>編集</span>
+                              </button>
+                            )}
+                          />
                         </div>
                       </div>
                     ))}
