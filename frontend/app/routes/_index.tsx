@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import { Logo } from "~/components/Logo";
+import { BaseLayout } from "~/components/BaseLayout";
 
 export const meta: MetaFunction = () => {
   return [
@@ -9,9 +9,5 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  return (
-    <div className="flex h-screen items-center justify-center">
-      <Logo />
-    </div>
-  );
+  return <BaseLayout title="トップ">###</BaseLayout>;
 }
