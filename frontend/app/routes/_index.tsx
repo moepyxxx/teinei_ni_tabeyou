@@ -1,4 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
+import { Link } from "@remix-run/react";
 import { BaseLayout } from "~/components/BaseLayout";
 
 export const meta: MetaFunction = () => {
@@ -9,5 +10,18 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  return <BaseLayout title="トップ">###</BaseLayout>;
+  return (
+    <BaseLayout title="トップ">
+      <div className="text-center space-y-2">
+        <p>さてなにをしようかな</p>
+        <ul>
+          <li>
+            <Link className="underline" to="/menus">
+              献立を立てようかな〜
+            </Link>
+          </li>
+        </ul>
+      </div>
+    </BaseLayout>
+  );
 }
