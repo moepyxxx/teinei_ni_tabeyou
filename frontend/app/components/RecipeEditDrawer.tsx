@@ -10,6 +10,7 @@ import {
 } from "~/components/ui/drawer";
 import { Button } from "~/components/ui/button";
 import { RecipeEdit } from "./RecipeEdit";
+import { useToast } from "~/hooks/use-toast";
 
 type Material = {
   item: string;
@@ -30,6 +31,8 @@ type Props = {
 };
 
 export const RecipeEditDrawer: FC<Props> = ({ recipeID, renderButton }) => {
+  const { toast } = useToast();
+
   const [initialRecipe, setInitialRecipe] = useState<Recipe | null>(null);
   const onClick = async () => {
     const recipe: Recipe = await (
@@ -49,7 +52,6 @@ export const RecipeEditDrawer: FC<Props> = ({ recipeID, renderButton }) => {
           {initialRecipe ? (
             <RecipeEdit
               initialRecipe={initialRecipe}
-              recipeID={recipeID}
               renderAction={(onSubmit) => (
                 <DrawerFooter>
                   <DrawerClose asChild>
@@ -71,6 +73,32 @@ export const RecipeEditDrawer: FC<Props> = ({ recipeID, renderButton }) => {
                   </DrawerClose>
                 </DrawerFooter>
               )}
+              onSubmit={async ({ title, sourceMemo, sourceURL, materials }) => {
+                const response = await fetch(
+                  `${import.meta.env.VITE_API_URL}/recipes/${recipeID}`,
+                  {
+                    method: "PATCH",
+                    headers: new Headers({
+                      "Content-Type": "application/json",
+                    }),
+                    body: JSON.stringify({
+                      title,
+                      source_memo: sourceMemo,
+                      source_url: sourceURL,
+                      materials,
+                    }),
+                  }
+                );
+                if (!response.ok) {
+                  toast({
+                    description: "保存に失敗しました・・・",
+                  });
+                  return;
+                }
+                toast({
+                  description: "レシピを保存しました！",
+                });
+              }}
             />
           ) : (
             <p>Loading...</p>

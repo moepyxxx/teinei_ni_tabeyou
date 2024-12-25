@@ -7,6 +7,7 @@ import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as yup from "yup";
 import { useToast } from "~/hooks/use-toast";
 
+// TODO: nullは空文字にする
 const schema = yup.object().shape({
   title: yup.string().max(50, "Too Long!").required("Required"),
   sourceURL: yup.string().url().max(100, "Too Long!").nullable(),
@@ -23,17 +24,25 @@ const schema = yup.object().shape({
 type EditRecipeSchemaType = yup.InferType<typeof schema>;
 
 type Props = {
-  recipeID: number;
-  initialRecipe: Recipe;
+  initialRecipe?: Recipe;
   renderAction: (
     onSubmit: (e: MouseEvent<HTMLButtonElement, MouseEvent>) => void
   ) => ReactNode;
+  onSubmit: (recipe: EditRecipeSchemaType) => void;
+};
+
+const InitialRecipe: Recipe = {
+  title: "",
+  source_memo: null,
+  source_url: null,
+  memo: null,
+  materials: [],
 };
 
 export const RecipeEdit: FC<Props> = ({
-  recipeID,
-  initialRecipe,
+  initialRecipe = InitialRecipe,
   renderAction,
+  onSubmit,
 }) => {
   const { toast } = useToast();
 
@@ -46,31 +55,8 @@ export const RecipeEdit: FC<Props> = ({
       }}
       validationSchema={schema}
       validateOnMount
-      onSubmit={async ({ title, sourceMemo, sourceURL, materials }) => {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/recipes/${recipeID}`,
-          {
-            method: "PATCH",
-            headers: new Headers({
-              "Content-Type": "application/json",
-            }),
-            body: JSON.stringify({
-              title,
-              source_memo: sourceMemo,
-              source_url: sourceURL,
-              materials,
-            }),
-          }
-        );
-        if (!response.ok) {
-          toast({
-            description: "保存に失敗しました・・・",
-          });
-          return;
-        }
-        toast({
-          description: "レシピを保存しました！",
-        });
+      onSubmit={(recipe) => {
+        onSubmit(recipe);
       }}>
       {({ values, handleSubmit, isValid }) => (
         <Form>

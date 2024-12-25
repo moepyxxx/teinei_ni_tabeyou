@@ -19,7 +19,7 @@ type Recipe = {
   source_url: string | null;
 };
 
-type Menus = {
+export type Menus = {
   dinner: Recipe[] | null;
   lunch: Recipe[] | null;
   morning: Recipe[] | null;
@@ -42,7 +42,7 @@ export const clientLoader = async ({ params }: ClientLoaderFunctionArgs) => {
   };
 };
 
-const Sections: {
+export const Sections: {
   value: keyof Menus;
   label: string;
 }[] = [
@@ -60,7 +60,7 @@ const Sections: {
   },
 ];
 
-export default function Menus() {
+export default function MenuDetail() {
   const { date, menus } = useLoaderData<typeof clientLoader>();
 
   const isNotMenu = useMemo(() => {
@@ -106,13 +106,13 @@ export default function Menus() {
                           <RecipeEditDrawer
                             recipeID={recipe.id}
                             renderButton={(onClick) => (
-                              <button
+                              <Button
                                 onClick={onClick}
                                 type="button"
                                 className="flex items-center gap-1">
                                 <i className="fa-solid fa-file" />
                                 <span>詳細</span>
-                              </button>
+                              </Button>
                             )}
                           />
                         </div>
