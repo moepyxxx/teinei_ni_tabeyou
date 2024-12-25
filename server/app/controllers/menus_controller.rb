@@ -157,12 +157,24 @@ class MenusController < ApplicationController
     menus = Menu.where(date: date, user: current_user.id)
     menu_ids = menus.map { |menu| menu.id }
 
+    if menus.blank?
+      dinner = Menu.create!(date: date, section: "dinner", user_id: current_user.id)
+      menu_ids << dinner.id
+      menus << dinner
+      morning = Menu.create!(date: date, section: "morning", user_id: current_user.id)
+      menu_ids << morning.id
+      menus << morning
+      lunch = Menu.create!(date: date, section: "lunch", user_id: current_user.id)
+      menu_ids << lunch.id
+      menus << lunch
+    end
+
     ActiveRecord::Base.transaction do
       MenuRecipe.where(menu_id: menu_ids, user_id: current_user.id).destroy_all
 
       begin
         lunch_id = menus.find { |menu| menu.section == "lunch" }.id
-        menu_params[:lunch].each do |recipe_id|
+        menu_params[:lunch]&.each do |recipe_id|
           MenuRecipe.create!(
             menu_id: lunch_id,
             recipe_id: recipe_id,
@@ -171,7 +183,7 @@ class MenusController < ApplicationController
         end
 
         dinner_id = menus.find { |menu| menu.section == "dinner" }.id
-        menu_params[:dinner].each do |recipe_id|
+        menu_params[:dinner]&.each do |recipe_id|
           MenuRecipe.create!(
             menu_id: dinner_id,
             recipe_id: recipe_id,
@@ -180,7 +192,7 @@ class MenusController < ApplicationController
         end
 
         morning_id = menus.find { |menu| menu.section == "morning" }.id
-        menu_params[:morning].each do |recipe_id|
+        menu_params[:morning]&.each do |recipe_id|
           MenuRecipe.create!(
             menu_id: morning_id,
             recipe_id: recipe_id,
@@ -197,7 +209,7 @@ class MenusController < ApplicationController
   end
 
   def menu_params
-    params.require(:menu).permit(
+    params.permit(
       dinner: [],
       morning: [],
       lunch: []
