@@ -13,28 +13,52 @@ import {
   PopoverTrigger,
 } from "~/components/ui/popover";
 import { Button } from "./ui/button";
+import type { Recipe } from "~/routes/menus.$date";
 
-const recipes = [
+const recipes: Recipe[] = [
   {
-    value: 1,
-    label: "たまごかけごはん",
+    id: 3,
+    title: "Recipe A",
+    source_url: null,
   },
   {
-    value: 2,
-    label: "ほげふがぴよ",
+    id: 6,
+    title: "たまご焼き edit!",
+    source_url: null,
   },
   {
-    value: 3,
-    label: "ピーピー",
+    id: 7,
+    title: "サンドイッチ",
+    source_url: null,
+  },
+  {
+    id: 8,
+    title: "お好み焼き",
+    source_url: null,
+  },
+  {
+    id: 9,
+    title: "サラダ",
+    source_url: null,
+  },
+  {
+    id: 10,
+    title: "冷奴",
+    source_url: null,
   },
 ];
 
 type Props = {
-  current: number | null;
-  onChange: (id: number | null) => void;
+  current: Recipe | null;
+  alreadySelectedIDs: number[];
+  onChange: (recipe: Recipe | null) => void;
 };
 
-export const RecipeCombobox: FC<Props> = ({ current, onChange }) => {
+export const RecipeCombobox: FC<Props> = ({
+  current,
+  alreadySelectedIDs,
+  onChange,
+}) => {
   const [searchOpen, setSearchOpen] = useState(false);
   return (
     <Popover open={searchOpen} onOpenChange={setSearchOpen}>
@@ -46,7 +70,7 @@ export const RecipeCombobox: FC<Props> = ({ current, onChange }) => {
           aria-expanded={searchOpen ? "true" : "false"}
           className="w-[200px] justify-between">
           {current
-            ? recipes.find((framework) => framework.value === current)?.label
+            ? recipes.find((recipe) => recipe.id === current.id)?.title
             : "レシピを検索..."}
           <i className="fa-solid fa-chevron-down opacity-50" />
         </Button>
@@ -57,22 +81,22 @@ export const RecipeCombobox: FC<Props> = ({ current, onChange }) => {
           <CommandList>
             <CommandEmpty>レシピがありません</CommandEmpty>
             <CommandGroup>
-              {recipes.map((framework) => (
+              {recipes.map((recipe) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value.toString()}
+                  disabled={alreadySelectedIDs.includes(recipe.id)}
+                  key={recipe.id}
+                  value={recipe.id.toString()}
                   onSelect={(currentValue) => {
-                    onChange(
-                      Number(currentValue) === current
-                        ? null
-                        : Number(currentValue)
+                    const recipe = recipes.find(
+                      (recipe) => recipe.id === Number(currentValue)
                     );
+                    onChange(recipe ?? null);
                     setSearchOpen(false);
                   }}>
-                  {framework.label}
+                  {recipe.title}
                   <i
                     className={`fa-solid fa-check ${
-                      current === framework.value ? "opacity-100" : "opacity-0"
+                      current?.id === recipe.id ? "opacity-100" : "opacity-0"
                     }`}
                   />
                 </CommandItem>

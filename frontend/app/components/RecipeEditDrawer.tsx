@@ -36,7 +36,10 @@ export const RecipeEditDrawer: FC<Props> = ({ recipeID, renderButton }) => {
   const [initialRecipe, setInitialRecipe] = useState<Recipe | null>(null);
   const onClick = async () => {
     const recipe: Recipe = await (
-      await fetch(`${import.meta.env.VITE_API_URL}/recipes/${recipeID}`)
+      await fetch(`${import.meta.env.VITE_API_URL}/recipes/${recipeID}`, {
+        method: "GET",
+        credentials: "include",
+      })
     ).json();
     setInitialRecipe(recipe);
   };

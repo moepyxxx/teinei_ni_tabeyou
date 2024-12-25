@@ -1,7 +1,11 @@
 import { BaseLayout } from "~/components/BaseLayout";
 import { parse, isValid, format } from "date-fns";
 import invariant from "tiny-invariant";
-import { useLoaderData, type ClientLoaderFunctionArgs } from "@remix-run/react";
+import {
+  Link,
+  useLoaderData,
+  type ClientLoaderFunctionArgs,
+} from "@remix-run/react";
 import { ja } from "date-fns/locale/ja";
 import {
   Accordion,
@@ -9,11 +13,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import { Button } from "~/components/ui/button";
 import { useMemo } from "react";
 import { RecipeEditDrawer } from "~/components/RecipeEditDrawer";
 
-type Recipe = {
+export type Recipe = {
   id: number;
   title: string;
   source_url: string | null;
@@ -109,13 +112,13 @@ export default function MenuDetail() {
                           <RecipeEditDrawer
                             recipeID={recipe.id}
                             renderButton={(onClick) => (
-                              <Button
+                              <button
                                 onClick={onClick}
                                 type="button"
                                 className="flex items-center gap-1">
                                 <i className="fa-solid fa-file" />
                                 <span>詳細</span>
-                              </Button>
+                              </button>
                             )}
                           />
                         </div>
@@ -135,7 +138,9 @@ export default function MenuDetail() {
         </p>
       </div>
       <div className="text-center mt-8">
-        <Button variant="link">献立を編集する</Button>
+        <Link to={`/menus/edit/${format(date, "yyyyMMdd")}`}>
+          献立を編集する
+        </Link>
       </div>
     </BaseLayout>
   );

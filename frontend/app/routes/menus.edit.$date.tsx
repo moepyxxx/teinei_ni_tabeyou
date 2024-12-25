@@ -1,7 +1,11 @@
 import { BaseLayout } from "~/components/BaseLayout";
 import { parse, isValid, format } from "date-fns";
 import invariant from "tiny-invariant";
-import { useLoaderData, type ClientLoaderFunctionArgs } from "@remix-run/react";
+import {
+  useLoaderData,
+  useNavigate,
+  type ClientLoaderFunctionArgs,
+} from "@remix-run/react";
 import { ja } from "date-fns/locale/ja";
 import {
   Accordion,
@@ -11,10 +15,11 @@ import {
 } from "~/components/ui/accordion";
 import { Button } from "~/components/ui/button";
 import { RecipeEditDrawer } from "~/components/RecipeEditDrawer";
-import { type Menus, Sections } from "./menus.$date";
+import { type Menus, type Recipe, Sections } from "./menus.$date";
 import { useState } from "react";
 import { RecipeCombobox } from "~/components/RecipeCombobox";
 import { RecipeCreateDrawer } from "~/components/RecipeCreateDrawer";
+import { useToast } from "~/hooks/use-toast";
 
 export const clientLoader = async ({ params }: ClientLoaderFunctionArgs) => {
   invariant(params.date, "missing date");
@@ -24,7 +29,10 @@ export const clientLoader = async ({ params }: ClientLoaderFunctionArgs) => {
   }
 
   const menus: Menus = await (
-    await fetch(`${import.meta.env.VITE_API_URL}/menus/${params.date}`)
+    await fetch(`${import.meta.env.VITE_API_URL}/menus/${params.date}`, {
+      method: "GET",
+      credentials: "include",
+    })
   ).json();
 
   return {
@@ -34,11 +42,44 @@ export const clientLoader = async ({ params }: ClientLoaderFunctionArgs) => {
 };
 
 export default function MenuEdit() {
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
   const { date, menus } = useLoaderData<typeof clientLoader>();
+
   const [currentMenus, setCurrentMenus] = useState<Menus>(menus);
-  const [additionalRecipe, setAdditionalRecipe] = useState<{
-    id: null | number;
-  } | null>(null);
+  const [isSetAdditionalRecipe, setIsSetAdditionalRecipe] =
+    useState<boolean>(false);
+  const [additionalRecipe, setAdditionalRecipe] = useState<Recipe | null>(null);
+
+  const onSubmit = async () => {
+    const response = await fetch(
+      `${import.meta.env.VITE_API_URL}/menus/${format(date, "yyyyMMdd")}`,
+      {
+        method: "PATCH",
+        credentials: "include",
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
+        body: JSON.stringify({
+          lunch: currentMenus.lunch?.map((r) => r.id) ?? [],
+          dinner: currentMenus.dinner?.map((r) => r.id) ?? [],
+          morning: currentMenus.morning?.map((r) => r.id) ?? [],
+        }),
+      }
+    );
+    if (!response.ok) {
+      toast({
+        description: "保存に失敗しました・・・",
+      });
+      return;
+    }
+
+    toast({
+      description: "献立を保存しました！",
+    });
+    navigate(`/menus/${format(date, "yyyyMMdd")}`);
+  };
 
   return (
     <BaseLayout
@@ -92,13 +133,12 @@ export default function MenuEdit() {
                       </div>
                     </div>
                   ))}
-                  {additionalRecipe === null ? (
+                  {!isSetAdditionalRecipe ? (
                     <Button
                       variant="outline"
                       onClick={() => {
-                        setAdditionalRecipe({
-                          id: null,
-                        });
+                        setIsSetAdditionalRecipe(true);
+                        setAdditionalRecipe(null);
                       }}>
                       レシピを追加する
                     </Button>
@@ -107,19 +147,39 @@ export default function MenuEdit() {
                       <div className="flex gap-3">
                         <div className="basis-1/2">
                           <RecipeCombobox
-                            current={additionalRecipe.id}
-                            onChange={(id) => setAdditionalRecipe({ id })}
+                            alreadySelectedIDs={
+                              recipes?.map((recipe) => recipe.id) || []
+                            }
+                            current={additionalRecipe}
+                            onChange={setAdditionalRecipe}
                           />
                         </div>
-                        <div className="basis-1-2">
+                        <Button
+                          disabled={additionalRecipe === null}
+                          onClick={() => {
+                            setCurrentMenus({
+                              ...currentMenus,
+                              [section.value]: [
+                                ...(recipes || []),
+                                additionalRecipe,
+                              ],
+                            });
+                            setIsSetAdditionalRecipe(false);
+                          }}>
+                          レシピを追加
+                        </Button>
+                      </div>
+                      <div className="basis-1-2">
+                        <p className="text-sm">
+                          気に入ったレシピがない時は…
                           <RecipeCreateDrawer
                             renderButton={() => (
-                              <Button className="basis-1/2">
+                              <Button className="underline" variant="link">
                                 レシピを作成
                               </Button>
                             )}
                           />
-                        </div>
+                        </p>
                       </div>
                     </div>
                   )}
@@ -129,14 +189,8 @@ export default function MenuEdit() {
           );
         })}
       </Accordion>
-      {/* <div className="mt-8">
-        <h3 className="text-lg mb-2 font-bold">アドバイス</h3>
-        <p>
-          このレシピにはサラダが入っていてとても良い感じです。きのこも鉄分が豊富なのでいいですね。ただ、お肉や魚の品数が、お肉に偏っているので、お魚も食べてみてください。
-        </p>
-      </div> */}
       <div className="text-center mt-8">
-        <Button>変更内容を保存する</Button>
+        <Button onClick={onSubmit}>変更内容を保存する</Button>
       </div>
     </BaseLayout>
   );
