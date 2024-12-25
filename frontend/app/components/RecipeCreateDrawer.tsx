@@ -59,6 +59,7 @@ export const RecipeCreateDrawer: FC<Props> = ({ renderButton }) => {
                     source_url: sourceURL,
                     materials,
                   }),
+                  credentials: "include",
                 }
               );
               if (!response.ok) {

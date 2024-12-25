@@ -39,6 +39,7 @@ export default function Signin() {
                   email,
                   password,
                 }),
+                credentials: "include",
               }
             );
             if (!response.ok) {

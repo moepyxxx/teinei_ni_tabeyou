@@ -87,6 +87,7 @@ export const RecipeEditDrawer: FC<Props> = ({ recipeID, renderButton }) => {
                       source_url: sourceURL,
                       materials,
                     }),
+                    credentials: "include",
                   }
                 );
                 if (!response.ok) {

@@ -33,7 +33,10 @@ export const clientLoader = async ({ params }: ClientLoaderFunctionArgs) => {
   }
 
   const menus: Menus = await (
-    await fetch(`${import.meta.env.VITE_API_URL}/menus/${params.date}`)
+    await fetch(`${import.meta.env.VITE_API_URL}/menus/${params.date}`, {
+      method: "GET",
+      credentials: "include",
+    })
   ).json();
 
   return {
