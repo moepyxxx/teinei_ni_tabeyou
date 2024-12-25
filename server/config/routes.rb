@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   post "/logout", to: "sessions#destroy"
   resources :shopping_items, only: [ :index, :show, :update, :create, :destroy ]
   resources :recipes, only: [ :show, :create, :update, :destroy ]
+  get "/menus", to: "menus#index"
   get "/menus/:date", to: "menus#show", constraints: { date: /\d{8}/ }
   post "/menus/:date", to: "menus#create", constraints: { date: /\d{8}/ }
   patch "/menus/:date", to: "menus#update", constraints: { date: /\d{8}/ }
