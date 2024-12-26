@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::API
-  # 今これ引っかかるのでめんどいので
   before_action :authenticated_user
   include ActionController::Cookies
 

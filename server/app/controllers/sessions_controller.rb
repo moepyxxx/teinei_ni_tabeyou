@@ -19,6 +19,8 @@ class SessionsController < ApplicationController
 
   def destroy
     session[:user_id] = nil
+    reset_session
+    # cookies.delete("_teinei_app_session", path: "/")
     head :ok
   end
 end
