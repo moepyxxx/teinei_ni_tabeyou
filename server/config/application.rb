@@ -31,7 +31,7 @@ module Server
 
     # 認証を有効にするため
     # see: https://qiita.com/Kazuyaa/items/2d4065ddf2237c66dfd4
-    config.session_store :cookie_store, key: "_teinei_app_session", expire_after: 3.days
+    config.session_store :cookie_store, key: "_teinei_app_session", expire_after: 3.days, same_site: :strict
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use config.session_store, config.session_options
   end
